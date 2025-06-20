@@ -28,7 +28,12 @@ def simulate_mulligan_draw(
             if len(cards_kept) > avg_cards_kept:
                 cards_kept = random.sample(cards_kept, avg_cards_kept)
         else:
-            cards_kept = random.sample(mulligan_hand, avg_cards_kept)
+            # Actively keep target cards first
+            cards_kept = [card for card in mulligan_hand if card == "target"]
+            others = [card for card in mulligan_hand if card != "target"]
+            if len(cards_kept) < avg_cards_kept:
+                fill_count = avg_cards_kept - len(cards_kept)
+                cards_kept += random.sample(others, min(fill_count, len(others)))
 
         cards_to_mulligan = copy.deepcopy(mulligan_hand)
         for card in cards_kept:
