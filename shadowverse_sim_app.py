@@ -8,7 +8,7 @@ def simulate_mulligan_draw(
     mulligan_size=4,
     avg_cards_kept=2,
     turn_to_check=5,
-    force_mulligan_target=True,
+    keep_target_card=True,
 ):
     deck_size=40
     hits = 0
@@ -23,7 +23,7 @@ def simulate_mulligan_draw(
         remaining_deck = deck[mulligan_size:]
 
         # Determine how many to mulligan (assume avg_cards_kept)
-        if force_mulligan_target:
+        if not keep_target_card:
             cards_kept = [card for card in mulligan_hand if card != "target"]
             if len(cards_kept) > avg_cards_kept:
                 cards_kept = random.sample(cards_kept, avg_cards_kept)
@@ -69,10 +69,10 @@ Use this tool to simulate the probability of drawing at least one copy of a targ
 """)
 
 copies_of_target = st.slider("Copies of target card", 0, 40, 3)
-turn_to_check = st.slider("Turn to check by", 1, 15, 5)
-avg_cards_kept = st.slider("Average cards kept in mulligan", 0, 4, 2)
+turn_to_check = st.slider("Turn to check target card by", 1, 15, 5)
+avg_cards_kept = st.slider("Average number of cards kept in mulligan", 0, 4, 2)
 num_simulations = st.number_input("Number of simulations", min_value=1000, max_value=1_000_000, value=100_000, step=1000)
-force_mulligan_target = st.checkbox("Force mulligan target away", value=True)
+keep_target_card = st.checkbox("Keep target card in opening hand", value=True)
 
 if st.button("Run Simulation"):
     with st.spinner("Running simulation..."):
@@ -81,6 +81,6 @@ if st.button("Run Simulation"):
             num_simulations=num_simulations,
             avg_cards_kept=avg_cards_kept,
             turn_to_check=turn_to_check,
-            force_mulligan_target=force_mulligan_target,
+            keep_target_card=keep_target_card,
         )
     st.success(f"Probability of drawing at least one target card by turn {turn_to_check}: {prob:.2%}")
